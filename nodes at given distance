@@ -1,0 +1,81 @@
+class Solution {
+public:
+    unordered_map<Node*, Node*> parent;
+
+    void markParent(Node* root){
+        queue<Node*> q;
+        q.push(root);
+
+        while(!q.empty()){
+            Node* cur = q.front();
+            q.pop();
+
+            if(cur->left){
+                parent[cur->left] = cur;
+                q.push(cur->left);
+            }
+            if(cur->right){
+                parent[cur->right] = cur;
+                q.push(cur->right);
+            }
+        }
+    }
+
+    Node* findTarget(Node* root, int target){
+        if(!root) return NULL;
+        if(root->data == target) return root;
+
+        Node* left = findTarget(root->left, target);
+        if(left) return left;
+
+        return findTarget(root->right, target);
+    }
+
+    vector<int> KDistanceNodes(Node* root, int target, int k) {
+        markParent(root);
+        Node* targetNode = findTarget(root, target);
+
+        unordered_map<Node*, bool> vis;
+        queue<Node*> q;
+        q.push(targetNode);
+        vis[targetNode] = true;
+
+        int dist = 0;
+
+        while(!q.empty()){
+            int size = q.size();
+            if(dist == k) break;
+
+            dist++;
+
+            for(int i=0;i<size;i++){
+                Node* cur = q.front();
+                q.pop();
+
+                if(cur->left && !vis[cur->left]){
+                    vis[cur->left] = true;
+                    q.push(cur->left);
+                }
+
+                if(cur->right && !vis[cur->right]){
+                    vis[cur->right] = true;
+                    q.push(cur->right);
+                }
+
+                if(parent[cur] && !vis[parent[cur]]){
+                    vis[parent[cur]] = true;
+                    q.push(parent[cur]);
+                }
+            }
+        }
+
+        vector<int> ans;
+        while(!q.empty()){
+            ans.push_back(q.front()->data);
+            q.pop();
+        }
+
+        sort(ans.begin(), ans.end());
+        return ans;
+    }
+};
