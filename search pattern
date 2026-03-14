@@ -1,0 +1,41 @@
+class Solution {
+public:
+    vector<int> rabinKarp(string S, string pat) {
+        const int d = 256;
+        const int q = 101;
+
+        int n = S.size();
+        int m = pat.size();
+
+        vector<int> res;
+        int p = 0, t = 0, h = 1;
+
+        for(int i = 0; i < m - 1; i++)
+            h = (h * d) % q;
+
+        for(int i = 0; i < m; i++){
+            p = (d * p + pat[i]) % q;
+            t = (d * t + S[i]) % q;
+        }
+
+        for(int i = 0; i <= n - m; i++){
+            if(p == t){
+                bool match = true;
+                for(int j = 0; j < m; j++){
+                    if(S[i + j] != pat[j]){
+                        match = false;
+                        break;
+                    }
+                }
+                if(match) res.push_back(i);
+            }
+
+            if(i < n - m){
+                t = (d * (t - S[i] * h) + S[i + m]) % q;
+                if(t < 0) t += q;
+            }
+        }
+
+        return res;
+    }
+};
