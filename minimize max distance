@@ -1,0 +1,31 @@
+class Solution {
+public:
+    bool possible(vector<int>& arr, int k, double dist){
+        int count = 0;
+        
+        for(int i = 1; i < arr.size(); i++){
+            double gap = arr[i] - arr[i-1];
+            count += floor(gap / dist);
+        }
+        
+        return count <= k;
+    }
+
+    double minMaxDist(vector<int> &arr, int k){
+        double low = 0, high = 0;
+        
+        for(int i = 1; i < arr.size(); i++)
+            high = max(high, (double)(arr[i] - arr[i-1]));
+
+        while(high - low > 1e-6){
+            double mid = (low + high) / 2.0;
+
+            if(possible(arr, k, mid))
+                high = mid;
+            else
+                low = mid;
+        }
+
+        return high;
+    }
+};
