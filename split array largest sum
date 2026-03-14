@@ -1,0 +1,37 @@
+class Solution {
+public:
+    bool possible(vector<int>& arr, int k, long long maxSum){
+        long long sum = 0;
+        int count = 1;
+
+        for(int x : arr){
+            if(sum + x > maxSum){
+                count++;
+                sum = x;
+                if(count > k) return false;
+            } else {
+                sum += x;
+            }
+        }
+        return true;
+    }
+
+    int splitArray(vector<int>& arr, int k) {
+        long long low = *max_element(arr.begin(), arr.end());
+        long long high = accumulate(arr.begin(), arr.end(), 0LL);
+        long long ans = high;
+
+        while(low <= high){
+            long long mid = (low + high) / 2;
+
+            if(possible(arr, k, mid)){
+                ans = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return ans;
+    }
+};
