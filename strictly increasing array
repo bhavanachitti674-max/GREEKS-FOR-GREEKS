@@ -1,0 +1,20 @@
+class Solution {
+public:
+    int min_operations(vector<int>& nums) {
+        int n = nums.size();
+
+        vector<long long> b(n);
+        for(int i = 0; i < n; i++)
+            b[i] = (long long)nums[i] - i;
+
+        vector<long long> lis;
+
+        for(long long x : b){
+            auto it = upper_bound(lis.begin(), lis.end(), x);
+            if(it == lis.end()) lis.push_back(x);
+            else *it = x;
+        }
+
+        return n - lis.size();
+    }
+};
