@@ -1,0 +1,42 @@
+class Solution{
+public:
+
+vector<string> dfs(string s, unordered_set<string>& dict, unordered_map<string, vector<string>>& dp){
+    
+    if(dp.count(s)) return dp[s];
+    
+    vector<string> res;
+    
+    if(dict.count(s))
+        res.push_back(s);
+    
+    for(int i=1;i<s.size();i++){
+        
+        string left = s.substr(0,i);
+        string right = s.substr(i);
+        
+        if(dict.count(left)){
+            
+            vector<string> temp = dfs(right, dict, dp);
+            
+            for(string &t : temp)
+                res.push_back(left + " " + t);
+        }
+    }
+    
+    return dp[s] = res;
+}
+
+vector<string> wordBreak(vector<string>& dict, string s){
+    
+    unordered_set<string> st(dict.begin(), dict.end());
+    unordered_map<string, vector<string>> dp;
+    
+    vector<string> ans = dfs(s, st, dp);
+    
+    sort(ans.begin(), ans.end());
+    
+    return ans;
+}
+
+};
