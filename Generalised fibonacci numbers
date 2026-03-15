@@ -1,0 +1,45 @@
+class Solution {
+public:
+
+    vector<vector<long long>> multiply(vector<vector<long long>> A, vector<vector<long long>> B, long long m){
+        vector<vector<long long>> C(3, vector<long long>(3,0));
+
+        for(int i=0;i<3;i++)
+            for(int j=0;j<3;j++)
+                for(int k=0;k<3;k++)
+                    C[i][j] = (C[i][j] + A[i][k]*B[k][j]) % m;
+
+        return C;
+    }
+
+    vector<vector<long long>> power(vector<vector<long long>> A, long long n, long long m){
+        vector<vector<long long>> res = {{1,0,0},{0,1,0},{0,0,1}};
+
+        while(n){
+            if(n&1) res = multiply(res,A,m);
+            A = multiply(A,A,m);
+            n >>= 1;
+        }
+
+        return res;
+    }
+
+    long long genFibNum(long long a, long long b, long long c, long long n, long long m) {
+
+        if(n==1 || n==2) return 1%m;
+
+        vector<vector<long long>> T = {
+            {a,b,c},
+            {1,0,0},
+            {0,0,1}
+        };
+
+        T = power(T,n-2,m);
+
+        long long g2 = 1, g1 = 1;
+
+        long long ans = (T[0][0]*g2 + T[0][1]*g1 + T[0][2]) % m;
+
+        return ans;
+    }
+};
