@@ -1,0 +1,68 @@
+class Solution{
+public:
+
+struct Trie{
+    Trie* child[2];
+    
+    Trie(){
+        child[0] = child[1] = NULL;
+    }
+};
+
+void insert(Trie* root, int num){
+    
+    Trie* node = root;
+    
+    for(int i=31;i>=0;i--){
+        
+        int bit = (num>>i)&1;
+        
+        if(!node->child[bit])
+            node->child[bit] = new Trie();
+            
+        node = node->child[bit];
+    }
+}
+
+int query(Trie* root, int num){
+    
+    Trie* node = root;
+    int ans = 0;
+    
+    for(int i=31;i>=0;i--){
+        
+        int bit = (num>>i)&1;
+        
+        if(node->child[1-bit]){
+            ans |= (1<<i);
+            node = node->child[1-bit];
+        }
+        else
+            node = node->child[bit];
+    }
+    
+    return ans;
+}
+
+int maxSubarrayXOR(int N, int arr[]){
+    
+    Trie* root = new Trie();
+    
+    insert(root,0);
+    
+    int prefix = 0;
+    int maxXor = 0;
+    
+    for(int i=0;i<N;i++){
+        
+        prefix ^= arr[i];
+        
+        insert(root,prefix);
+        
+        maxXor = max(maxXor, query(root,prefix));
+    }
+    
+    return maxXor;
+}
+
+};
