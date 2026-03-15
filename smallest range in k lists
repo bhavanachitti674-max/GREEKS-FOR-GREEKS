@@ -1,0 +1,47 @@
+class Solution {
+  public:
+    vector<int> findSmallestRange(vector<vector<int>>& mat) {
+        
+        int n = mat.size();
+        int k = mat[0].size();
+        
+        priority_queue<
+            pair<int,pair<int,int>>,
+            vector<pair<int,pair<int,int>>>,
+            greater<pair<int,pair<int,int>>>
+        > pq;
+        
+        int maxi = INT_MIN;
+        
+        for(int i=0;i<n;i++){
+            pq.push({mat[i][0],{i,0}});
+            maxi = max(maxi, mat[i][0]);
+        }
+        
+        int start = 0, end = INT_MAX;
+        
+        while(true){
+            
+            auto curr = pq.top();
+            pq.pop();
+            
+            int mini = curr.first;
+            int row = curr.second.first;
+            int col = curr.second.second;
+            
+            if(maxi - mini < end - start){
+                start = mini;
+                end = maxi;
+            }
+            
+            if(col + 1 < k){
+                int next = mat[row][col+1];
+                pq.push({next,{row,col+1}});
+                maxi = max(maxi, next);
+            }
+            else break;
+        }
+        
+        return {start,end};
+    }
+};
