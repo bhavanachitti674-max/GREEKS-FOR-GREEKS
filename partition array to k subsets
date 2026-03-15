@@ -1,0 +1,41 @@
+class Solution {
+public:
+
+    bool backtrack(int idx, vector<int>& arr, vector<int>& subset, int target){
+        if(idx == arr.size()){
+            for(int s : subset)
+                if(s != target) return false;
+            return true;
+        }
+
+        for(int i=0;i<subset.size();i++){
+            if(subset[i] + arr[idx] <= target){
+                subset[i] += arr[idx];
+
+                if(backtrack(idx+1, arr, subset, target))
+                    return true;
+
+                subset[i] -= arr[idx];
+            }
+
+            if(subset[i] == 0) break;
+        }
+
+        return false;
+    }
+
+    bool isKPartitionPossible(vector<int>& arr, int k) {
+        int sum = 0;
+        for(int x : arr) sum += x;
+
+        if(sum % k != 0) return false;
+
+        int target = sum / k;
+
+        sort(arr.rbegin(), arr.rend());
+
+        vector<int> subset(k,0);
+
+        return backtrack(0, arr, subset, target);
+    }
+};
