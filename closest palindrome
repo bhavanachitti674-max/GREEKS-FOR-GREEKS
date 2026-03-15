@@ -1,0 +1,20 @@
+class Solution {
+public:
+    bool isPal(long long n){
+        string s = to_string(n);
+        string t = s;
+        reverse(t.begin(), t.end());
+        return s == t;
+    }
+    
+    long long closestPalindrome(long long num) {
+        if(isPal(num)) return num;
+
+        long long d = 1;
+        while(true){
+            if(num - d >= 0 && isPal(num - d)) return num - d;
+            if(isPal(num + d)) return num + d;
+            d++;
+        }
+    }
+};
