@@ -1,0 +1,51 @@
+class Solution {
+public:
+    vector<int> parent;
+
+    int find(int x){
+        if(parent[x]==x) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    void unite(int a,int b){
+        a = find(a);
+        b = find(b);
+        if(a!=b) parent[b] = a;
+    }
+
+    vector<vector<string>> accMerge(vector<vector<string>> &arr) {
+        int n = arr.size();
+        parent.resize(n);
+        for(int i=0;i<n;i++) parent[i]=i;
+
+        unordered_map<string,int> mp;
+
+        for(int i=0;i<n;i++){
+            for(int j=1;j<arr[i].size();j++){
+                string mail = arr[i][j];
+                if(mp.find(mail)==mp.end())
+                    mp[mail] = i;
+                else
+                    unite(i, mp[mail]);
+            }
+        }
+
+        unordered_map<int, set<string>> groups;
+
+        for(auto &it: mp){
+            int root = find(it.second);
+            groups[root].insert(it.first);
+        }
+
+        vector<vector<string>> ans;
+
+        for(auto &g: groups){
+            vector<string> temp;
+            temp.push_back(arr[g.first][0]);
+            for(auto &mail: g.second) temp.push_back(mail);
+            ans.push_back(temp);
+        }
+
+        return ans;
+    }
+};
