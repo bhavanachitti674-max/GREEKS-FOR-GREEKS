@@ -1,0 +1,32 @@
+class Solution{
+public:
+    int solve(int i, vector<int>& arr, int k, vector<int>& dp){
+        int n = arr.size();
+        if(i == n) return 0;
+        if(dp[i] != -1) return dp[i];
+
+        int len = 0;
+        int ans = INT_MAX;
+
+        for(int j = i; j < n; j++){
+            len += arr[j];
+
+            int spaces = k - (len + (j - i));
+            if(spaces < 0) break;
+
+            int cost;
+            if(j == n - 1) cost = 0;
+            else cost = spaces * spaces;
+
+            ans = min(ans, cost + solve(j + 1, arr, k, dp));
+        }
+
+        return dp[i] = ans;
+    }
+
+    int solveWordWrap(vector<int> arr, int k){
+        int n = arr.size();
+        vector<int> dp(n, -1);
+        return solve(0, arr, k, dp);
+    }
+};
