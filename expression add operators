@@ -1,0 +1,47 @@
+class Solution {
+public:
+
+void dfs(string &s, long long target, int pos, long long value,
+         long long prev, string expr, vector<string> &ans){
+    
+    if(pos == s.size()){
+        if(value == target)
+            ans.push_back(expr);
+        return;
+    }
+    
+    for(int i = pos; i < s.size(); i++){
+        
+        if(i > pos && s[pos] == '0') break;
+        
+        string part = s.substr(pos, i-pos+1);
+        long long num = stoll(part);
+        
+        if(pos == 0){
+            dfs(s, target, i+1, num, num, part, ans);
+        }
+        else{
+            dfs(s, target, i+1, value + num, num, expr + "+" + part, ans);
+            
+            dfs(s, target, i+1, value - num, -num, expr + "-" + part, ans);
+            
+            dfs(s, target, i+1,
+                value - prev + prev * num,
+                prev * num,
+                expr + "*" + part, ans);
+        }
+    }
+}
+
+vector<string> findExpr(string S, int target) {
+    
+    vector<string> ans;
+    
+    dfs(S, target, 0, 0, 0, "", ans);
+    
+    sort(ans.begin(), ans.end());
+    
+    return ans;
+}
+
+};
