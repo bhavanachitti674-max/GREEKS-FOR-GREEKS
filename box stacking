@@ -1,0 +1,44 @@
+class Solution{
+public:
+
+struct Box{
+    int l,w,h;
+};
+
+static bool cmp(Box a, Box b){
+    return a.l * a.w > b.l * b.w;
+}
+
+int maxHeight(vector<int>& height, vector<int>& width, vector<int>& length){
+    
+    int n = height.size();
+    vector<Box> boxes;
+    
+    for(int i=0;i<n;i++){
+        
+        boxes.push_back({max(length[i],width[i]), min(length[i],width[i]), height[i]});
+        boxes.push_back({max(height[i],length[i]), min(height[i],length[i]), width[i]});
+        boxes.push_back({max(height[i],width[i]), min(height[i],width[i]), length[i]});
+    }
+    
+    sort(boxes.begin(), boxes.end(), cmp);
+    
+    int m = boxes.size();
+    vector<int> dp(m);
+    
+    for(int i=0;i<m;i++)
+        dp[i] = boxes[i].h;
+    
+    for(int i=1;i<m;i++){
+        for(int j=0;j<i;j++){
+            
+            if(boxes[i].l < boxes[j].l && boxes[i].w < boxes[j].w){
+                dp[i] = max(dp[i], dp[j] + boxes[i].h);
+            }
+        }
+    }
+    
+    return *max_element(dp.begin(), dp.end());
+}
+
+};
