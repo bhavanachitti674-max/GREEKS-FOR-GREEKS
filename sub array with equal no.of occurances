@@ -1,0 +1,22 @@
+class Solution{
+public:
+    long long sameOccurrence(vector<int>& arr, int x, int y){
+        
+        unordered_map<int,long long> freq;
+        int prefix = 0;
+        long long ans = 0;
+
+        freq[0] = 1;
+
+        for(int v : arr){
+            
+            if(v == x) prefix++;
+            else if(v == y) prefix--;
+
+            ans += freq[prefix];
+            freq[prefix]++;
+        }
+
+        return ans;
+    }
+};
