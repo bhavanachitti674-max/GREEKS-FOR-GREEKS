@@ -1,0 +1,62 @@
+class Solution{
+public:
+
+    vector<int> parent, size;
+
+    int find(int x){
+        if(parent[x] == x) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    long long unite(int a,int b){
+        a = find(a);
+        b = find(b);
+
+        if(a == b) return 0;
+
+        if(size[a] < size[b]) swap(a,b);
+
+        long long paths = 1LL * size[a] * size[b];
+
+        parent[b] = a;
+        size[a] += size[b];
+
+        return paths;
+    }
+
+    vector<int> maximumWeight(int n, vector<vector<int>> edges, int q, vector<int> &queries){
+
+        sort(edges.begin(), edges.end(), [](auto &a, auto &b){
+            return a[2] < b[2];
+        });
+
+        vector<pair<int,int>> qs;
+        for(int i=0;i<q;i++)
+            qs.push_back({queries[i], i});
+
+        sort(qs.begin(), qs.end());
+
+        parent.resize(n+1);
+        size.resize(n+1,1);
+
+        for(int i=1;i<=n;i++) parent[i]=i;
+
+        vector<int> ans(q);
+        long long paths = 0;
+        int j = 0;
+
+        for(auto &it : qs){
+            int val = it.first;
+            int idx = it.second;
+
+            while(j < edges.size() && edges[j][2] <= val){
+                paths += unite(edges[j][0], edges[j][1]);
+                j++;
+            }
+
+            ans[idx] = paths;
+        }
+
+        return ans;
+    }
+};
