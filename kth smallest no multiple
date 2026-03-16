@@ -1,0 +1,23 @@
+class Solution {
+public:
+    int kthSmallest(int n, int m, int k) {
+        
+        int l = 1, r = n * m;
+        
+        while(l < r){
+            int mid = l + (r - l) / 2;
+            
+            long long count = 0;
+            
+            for(int i = 1; i <= n; i++)
+                count += min(m, mid / i);
+            
+            if(count < k)
+                l = mid + 1;
+            else
+                r = mid;
+        }
+        
+        return l;
+    }
+};
