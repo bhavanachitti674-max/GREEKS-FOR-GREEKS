@@ -1,0 +1,29 @@
+class Solution {
+public:
+    
+    bool isCover(int mask, vector<pair<int,int>> &edges){
+        for(auto &e : edges){
+            int u = e.first - 1;
+            int v = e.second - 1;
+
+            if(!(mask & (1<<u)) && !(mask & (1<<v)))
+                return false;
+        }
+        return true;
+    }
+
+    int vertexCover(int n, vector<pair<int,int>> &edges) {
+        int ans = n;
+
+        for(int mask = 0; mask < (1<<n); mask++){
+            int cnt = __builtin_popcount(mask);
+
+            if(cnt >= ans) continue;
+
+            if(isCover(mask, edges))
+                ans = cnt;
+        }
+
+        return ans;
+    }
+};
