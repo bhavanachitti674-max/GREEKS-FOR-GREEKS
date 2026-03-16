@@ -1,0 +1,51 @@
+class Solution{
+public:
+    long long minTime(int n, vector<int>& locations, vector<int>& types){
+        
+        unordered_map<int, pair<long long,long long>> mp;
+
+        for(int i=0;i<n;i++){
+            int t = types[i];
+            long long x = locations[i];
+
+            if(mp.find(t)==mp.end())
+                mp[t] = {x,x};
+            else{
+                mp[t].first = min(mp[t].first, x);
+                mp[t].second = max(mp[t].second, x);
+            }
+        }
+
+        vector<int> order;
+        for(auto &it: mp) order.push_back(it.first);
+        sort(order.begin(), order.end());
+
+        long long prevL = 0, prevR = 0;
+        long long prevPosL = 0, prevPosR = 0;
+
+        for(int t: order){
+            long long L = mp[t].first;
+            long long R = mp[t].second;
+
+            long long cost = abs(R-L);
+
+            long long curL = min(
+                prevL + abs(prevPosL - R) + cost,
+                prevR + abs(prevPosR - R) + cost
+            );
+
+            long long curR = min(
+                prevL + abs(prevPosL - L) + cost,
+                prevR + abs(prevPosR - L) + cost
+            );
+
+            prevL = curL;
+            prevR = curR;
+            prevPosL = L;
+            prevPosR = R;
+        }
+
+        return min(prevL + abs(prevPosL),
+                   prevR + abs(prevPosR));
+    }
+};
