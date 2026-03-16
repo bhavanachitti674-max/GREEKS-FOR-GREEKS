@@ -1,0 +1,28 @@
+class Solution {
+public:
+    int kBitFlips(vector<int>& arr, int k) {
+        
+        int n = arr.size();
+        vector<int> flip(n,0);
+        
+        int ans = 0, curFlip = 0;
+        
+        for(int i=0;i<n;i++){
+            
+            if(i >= k)
+                curFlip ^= flip[i-k];
+            
+            if((arr[i] ^ curFlip) == 0){
+                
+                if(i + k > n)
+                    return -1;
+                
+                ans++;
+                curFlip ^= 1;
+                flip[i] = 1;
+            }
+        }
+        
+        return ans;
+    }
+};
