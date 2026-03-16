@@ -1,0 +1,40 @@
+class Solution {
+public:
+    int shotestPath(vector<vector<int>> &mat, int n, int m, int k) {
+        
+        queue<tuple<int,int,int,int>> q; 
+        // row, col, walls_left, steps
+        
+        vector<vector<vector<int>>> vis(n, vector<vector<int>>(m, vector<int>(k+1,0)));
+
+        q.push({0,0,k,0});
+        vis[0][0][k] = 1;
+
+        int dir[4][2] = {{1,0},{-1,0},{0,1},{0,-1}};
+
+        while(!q.empty()){
+            auto [x,y,w,steps] = q.front();
+            q.pop();
+
+            if(x==n-1 && y==m-1)
+                return steps;
+
+            for(auto &d:dir){
+                int nx = x + d[0];
+                int ny = y + d[1];
+
+                if(nx>=0 && ny>=0 && nx<n && ny<m){
+                    
+                    int nw = w - mat[nx][ny];
+
+                    if(nw>=0 && !vis[nx][ny][nw]){
+                        vis[nx][ny][nw] = 1;
+                        q.push({nx,ny,nw,steps+1});
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+};
