@@ -1,0 +1,47 @@
+class Solution {
+public:
+    string removeBrackets(string Exp) {
+        int n = Exp.size();
+        vector<bool> remove(n,false);
+        stack<int> st;
+
+        for(int i=0;i<n;i++){
+            if(Exp[i]=='('){
+                st.push(i);
+            }
+            else if(Exp[i]==')'){
+                int open = st.top();
+                st.pop();
+
+                bool plus=false, minus=false, mul=false, div=false;
+
+                for(int j=open+1;j<i;j++){
+                    if(Exp[j]=='+') plus=true;
+                    if(Exp[j]=='-') minus=true;
+                    if(Exp[j]=='*') mul=true;
+                    if(Exp[j]=='/') div=true;
+                }
+
+                bool left=false,right=false;
+
+                if(open-1>=0 && (Exp[open-1]=='*' || Exp[open-1]=='/'))
+                    left=true;
+
+                if(i+1<n && (Exp[i+1]=='*' || Exp[i+1]=='/'))
+                    right=true;
+
+                if((!left && !right) || (!(plus||minus) && !(left||right))){
+                    remove[open]=true;
+                    remove[i]=true;
+                }
+            }
+        }
+
+        string ans="";
+        for(int i=0;i<n;i++){
+            if(!remove[i]) ans+=Exp[i];
+        }
+
+        return ans;
+    }
+};
