@@ -1,0 +1,26 @@
+class Solution {
+public:
+
+    void expand(int l, int r, string &s, set<string> &st){
+        int n = s.size();
+
+        while(l >= 0 && r < n && s[l] == s[r]){
+            st.insert(s.substr(l, r-l+1));
+            l--;
+            r++;
+        }
+    }
+
+    vector<string> palindromicSubstr(string s){
+        int n = s.size();
+        set<string> st;
+
+        for(int i = 0; i < n; i++){
+            expand(i, i, s, st);     
+            expand(i, i+1, s, st);   
+        }
+
+        vector<string> ans(st.begin(), st.end());
+        return ans;
+    }
+};
