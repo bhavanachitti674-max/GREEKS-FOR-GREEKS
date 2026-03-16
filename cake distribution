@@ -1,0 +1,40 @@
+class Solution{
+public:
+
+    bool possible(vector<int>& a, int n, int k, long long mid){
+        long long sum = 0;
+        int pieces = 0;
+
+        for(int i=0;i<n;i++){
+            sum += a[i];
+
+            if(sum >= mid){
+                pieces++;
+                sum = 0;
+            }
+        }
+
+        return pieces >= k+1;
+    }
+
+    int maxSweetness(vector<int>& sweetness, int N, int K){
+        
+        long long l = 1, r = 0;
+
+        for(int x : sweetness) r += x;
+
+        long long ans = 0;
+
+        while(l <= r){
+            long long mid = (l + r) / 2;
+
+            if(possible(sweetness, N, K, mid)){
+                ans = mid;
+                l = mid + 1;
+            }
+            else r = mid - 1;
+        }
+
+        return ans;
+    }
+};
