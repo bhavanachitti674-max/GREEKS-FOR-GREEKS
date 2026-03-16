@@ -1,0 +1,60 @@
+class Solution{
+public:
+
+    Node* LCA(Node* root,int a,int b){
+        if(!root) return NULL;
+        if(root->data==a || root->data==b) return root;
+
+        Node* l = LCA(root->left,a,b);
+        Node* r = LCA(root->right,a,b);
+
+        if(l && r) return root;
+        return l?l:r;
+    }
+
+    bool countTurns(Node* root,int target,int &turns,int dir){
+        if(!root) return false;
+
+        if(root->data==target) return true;
+
+        if(root->left && countTurns(root->left,target,turns,0)){
+            if(dir==1) turns++;
+            return true;
+        }
+
+        if(root->right && countTurns(root->right,target,turns,1)){
+            if(dir==0) turns++;
+            return true;
+        }
+
+        return false;
+    }
+
+    int NumberOFTurns(Node* root, int first, int second){
+        
+        Node* lca = LCA(root,first,second);
+
+        int turns = 0;
+
+        if(lca->data == first){
+            if(countTurns(lca->left,second,turns,0) || 
+               countTurns(lca->right,second,turns,1))
+                return turns==0?-1:turns;
+        }
+
+        if(lca->data == second){
+            if(countTurns(lca->left,first,turns,0) || 
+               countTurns(lca->right,first,turns,1))
+                return turns==0?-1:turns;
+        }
+
+        int t1=0,t2=0;
+
+        countTurns(lca->left,first,t1,0) || countTurns(lca->right,first,t1,1);
+        countTurns(lca->left,second,t2,0) || countTurns(lca->right,second,t2,1);
+
+        int ans = t1 + t2 + 1;
+
+        return ans==0?-1:ans;
+    }
+};
