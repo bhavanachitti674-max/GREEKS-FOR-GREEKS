@@ -1,0 +1,38 @@
+class Solution {
+public:
+    bool canMake(vector<int>& rank, int n, int time) {
+        int total = 0;
+
+        for (int r : rank) {
+            int t = 0, k = 1;
+
+            while (true) {
+                t += k * r;
+                if (t > time) break;
+                total++;
+                k++;
+                if (total >= n) return true;
+            }
+        }
+
+        return total >= n;
+    }
+
+    int minTime(vector<int>& rank, int n) {  // ✅ fixed order
+        int low = 0, high = 1e7;
+        int ans = high;
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+
+            if (canMake(rank, n, mid)) {
+                ans = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return ans;
+    }
+};
