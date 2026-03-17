@@ -1,0 +1,59 @@
+class TrieNode {
+public:
+    TrieNode* child[26];
+    int freq;
+    
+    TrieNode() {
+        freq = 0;
+        for(int i = 0; i < 26; i++) child[i] = NULL;
+    }
+};
+
+class Solution {
+public:
+    TrieNode* root = new TrieNode();
+    
+    // Insert word into trie
+    void insert(string &word) {
+        TrieNode* node = root;
+        for(char c : word) {
+            int idx = c - 'a';
+            if(node->child[idx] == NULL)
+                node->child[idx] = new TrieNode();
+            
+            node = node->child[idx];
+            node->freq++;
+        }
+    }
+    
+    // Find prefix
+    string getPrefix(string &word) {
+        TrieNode* node = root;
+        string prefix = "";
+        
+        for(char c : word) {
+            int idx = c - 'a';
+            node = node->child[idx];
+            prefix += c;
+            
+            if(node->freq == 1) break;
+        }
+        
+        return prefix;
+    }
+    
+    vector<string> findPrefixes(string arr[], int n) {
+        // Step 1: insert all words
+        for(int i = 0; i < n; i++) {
+            insert(arr[i]);
+        }
+        
+        // Step 2: get prefixes
+        vector<string> res;
+        for(int i = 0; i < n; i++) {
+            res.push_back(getPrefix(arr[i]));
+        }
+        
+        return res;
+    }
+};
