@@ -1,0 +1,37 @@
+class Solution {
+public:
+    vector<vector<int>> solve(int n, int p, vector<int> a, vector<int> b, vector<int> d) {
+        vector<int> in(n+1, 0), out(n+1, 0), dia(n+1, 0);
+        
+        // store connections
+        for (int i = 0; i < p; i++) {
+            out[a[i]] = b[i];
+            in[b[i]] = a[i];
+            dia[a[i]] = d[i];
+        }
+
+        vector<vector<int>> ans;
+
+        // find starting points (tank)
+        for (int i = 1; i <= n; i++) {
+            if (out[i] && !in[i]) {
+                int start = i;
+                int curr = i;
+                int minDia = INT_MAX;
+
+                // traverse chain
+                while (out[curr]) {
+                    minDia = min(minDia, dia[curr]);
+                    curr = out[curr];
+                }
+
+                int end = curr;
+                ans.push_back({start, end, minDia});
+            }
+        }
+
+        sort(ans.begin(), ans.end()); // sort by tank house
+
+        return ans;
+    }
+};
