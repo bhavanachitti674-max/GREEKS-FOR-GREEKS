@@ -1,0 +1,50 @@
+class Solution {
+public:
+    bool isPalindrome(string &s, int l, int r) {
+        while (l < r) {
+            if (s[l++] != s[r--]) return false;
+        }
+        return true;
+    }
+    
+    bool palindromepair(int N, string arr[]) {
+        unordered_map<string, int> mp;
+        
+        for (int i = 0; i < N; i++)
+            mp[arr[i]]++;
+        
+        for (int i = 0; i < N; i++) {
+            string s = arr[i];
+            int len = s.size();
+            
+            for (int cut = 0; cut <= len; cut++) {
+                string left = s.substr(0, cut);
+                string right = s.substr(cut);
+                
+                // Case 1: left palindrome
+                if (isPalindrome(left, 0, left.size() - 1)) {
+                    string revRight = right;
+                    reverse(revRight.begin(), revRight.end());
+                    
+                    if (mp.count(revRight)) {
+                        if (revRight != s || mp[revRight] > 1)
+                            return true;
+                    }
+                }
+                
+                // Case 2: right palindrome
+                if (cut != len && isPalindrome(right, 0, right.size() - 1)) {
+                    string revLeft = left;
+                    reverse(revLeft.begin(), revLeft.end());
+                    
+                    if (mp.count(revLeft)) {
+                        if (revLeft != s || mp[revLeft] > 1)
+                            return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+};
