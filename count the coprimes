@@ -1,0 +1,45 @@
+class Solution {
+public:
+    int cntCoprime(vector<int>& arr) {   // ✅ renamed here
+        int maxA = 10000;
+        vector<int> freq(maxA + 1, 0);
+
+        for (int x : arr) freq[x]++;
+
+        vector<int> countDiv(maxA + 1, 0);
+        for (int d = 1; d <= maxA; d++) {
+            for (int multiple = d; multiple <= maxA; multiple += d) {
+                countDiv[d] += freq[multiple];
+            }
+        }
+
+        vector<int> mobius(maxA + 1, 1);
+        vector<bool> prime(maxA + 1, true);
+
+        for (int i = 2; i <= maxA; i++) {
+            if (prime[i]) {
+                for (int j = i; j <= maxA; j += i) {
+                    prime[j] = false;
+                    mobius[j] *= -1;
+                }
+                for (int j = i * i; j <= maxA; j += i * i) {
+                    mobius[j] = 0;
+                }
+            }
+        }
+
+        long long n = arr.size();
+        long long totalPairs = n * (n - 1) / 2;
+
+        long long notCoprime = 0;
+
+        for (int d = 2; d <= maxA; d++) {
+            if (mobius[d] == 0) continue;
+            long long c = countDiv[d];
+            long long pairs = c * (c - 1) / 2;
+            notCoprime += mobius[d] * pairs;
+        }
+
+        return totalPairs - notCoprime;
+    }
+};
