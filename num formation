@@ -1,0 +1,58 @@
+class Solution {
+public:
+    int getSum(int X, int Y, int Z) {
+        const int MOD = 1e9 + 7;
+
+        // dp[i][j][k] = {count, sum}
+        vector<vector<vector<pair<long long,long long>>>> dp(
+            X+1, vector<vector<pair<long long,long long>>>(
+                Y+1, vector<pair<long long,long long>>(Z+1, {0,0})
+            )
+        );
+
+        dp[0][0][0] = {1, 0};
+
+        for (int i = 0; i <= X; i++) {
+            for (int j = 0; j <= Y; j++) {
+                for (int k = 0; k <= Z; k++) {
+                    auto [cnt, sum] = dp[i][j][k];
+
+                    if (i + j + k == 0) continue;
+
+                    long long totalCnt = 0, totalSum = 0;
+
+                    if (i > 0) {
+                        auto [c, s] = dp[i-1][j][k];
+                        totalCnt = (totalCnt + c) % MOD;
+                        totalSum = (totalSum + (s*10)%MOD + (4*c)%MOD) % MOD;
+                    }
+                    if (j > 0) {
+                        auto [c, s] = dp[i][j-1][k];
+                        totalCnt = (totalCnt + c) % MOD;
+                        totalSum = (totalSum + (s*10)%MOD + (5*c)%MOD) % MOD;
+                    }
+                    if (k > 0) {
+                        auto [c, s] = dp[i][j][k-1];
+                        totalCnt = (totalCnt + c) % MOD;
+                        totalSum = (totalSum + (s*10)%MOD + (6*c)%MOD) % MOD;
+                    }
+
+                    dp[i][j][k] = {totalCnt, totalSum};
+                }
+            }
+        }
+
+        long long ans = 0;
+
+        for (int i = 0; i <= X; i++) {
+            for (int j = 0; j <= Y; j++) {
+                for (int k = 0; k <= Z; k++) {
+                    if (i + j + k > 0)
+                        ans = (ans + dp[i][j][k].second) % MOD;
+                }
+            }
+        }
+
+        return ans;
+    }
+};
