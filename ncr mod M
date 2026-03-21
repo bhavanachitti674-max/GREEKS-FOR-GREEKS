@@ -1,0 +1,51 @@
+class Solution {
+public:
+    const int MOD = 1000003;
+    vector<long long> fact;
+
+    long long power(long long a, long long b) {
+        long long res = 1;
+        while (b) {
+            if (b & 1) res = (res * a) % MOD;
+            a = (a * a) % MOD;
+            b >>= 1;
+        }
+        return res;
+    }
+
+    long long nCrSmall(int n, int r) {
+        if (r > n) return 0;
+        long long num = fact[n];
+        long long den = (fact[r] * fact[n - r]) % MOD;
+        return (num * power(den, MOD - 2)) % MOD;
+    }
+
+    int nCr(long long n, long long r) {
+        if (r > n) return 0;
+
+        // Precompute factorial only once
+        if (fact.empty()) {
+            fact.resize(MOD);
+            fact[0] = 1;
+            for (int i = 1; i < MOD; i++)
+                fact[i] = (fact[i - 1] * i) % MOD;
+        }
+
+        long long res = 1;
+
+        // Iterative Lucas (no recursion → no stack overflow)
+        while (n > 0 || r > 0) {
+            int ni = n % MOD;
+            int ri = r % MOD;
+
+            if (ri > ni) return 0;
+
+            res = (res * nCrSmall(ni, ri)) % MOD;
+
+            n /= MOD;
+            r /= MOD;
+        }
+
+        return (int)res;
+    }
+};
