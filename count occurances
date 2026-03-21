@@ -1,0 +1,41 @@
+class Solution {
+public:
+    int R, C;
+
+    int dfs(vector<vector<char>>& mat, string& target, int i, int j, int idx) {
+        // boundary + mismatch check FIRST
+        if (i < 0 || j < 0 || i >= R || j >= C || mat[i][j] != target[idx])
+            return 0;
+
+        // if last character matched
+        if (idx == target.size() - 1)
+            return 1;
+
+        char temp = mat[i][j];
+        mat[i][j] = '#'; // mark visited
+
+        int count = dfs(mat, target, i+1, j, idx+1) +
+                    dfs(mat, target, i-1, j, idx+1) +
+                    dfs(mat, target, i, j+1, idx+1) +
+                    dfs(mat, target, i, j-1, idx+1);
+
+        mat[i][j] = temp; // backtrack
+        return count;
+    }
+
+    int findOccurrence(vector<vector<char>>& mat, string target) {
+        R = mat.size();
+        C = mat[0].size();
+        int ans = 0;
+
+        for (int i = 0; i < R; i++) {
+            for (int j = 0; j < C; j++) {
+                if (mat[i][j] == target[0]) {
+                    ans += dfs(mat, target, i, j, 0);
+                }
+            }
+        }
+
+        return ans;
+    }
+};
