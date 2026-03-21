@@ -1,0 +1,56 @@
+class Solution {
+public:
+    int luckyPermutations(int N, int M, vector<int>& arr, vector<vector<int>>& graph) {
+        
+        // adjacency matrix
+        vector<vector<int>> adj(N+1, vector<int>(N+1, 0));
+        for (auto &e : graph) {
+            adj[e[0]][e[1]] = 1;
+            adj[e[1]][e[0]] = 1;
+        }
+
+        int size = 1 << N;
+        vector<vector<int>> dp(size, vector<int>(N, 0));
+
+        // initial
+        for (int i = 0; i < N; i++) {
+            dp[1 << i][i] = 1;
+        }
+
+        for (int mask = 0; mask < size; mask++) {
+            for (int last = 0; last < N; last++) {
+                if (!(mask & (1 << last))) continue;
+
+                for (int nxt = 0; nxt < N; nxt++) {
+                    if (mask & (1 << nxt)) continue;
+
+                    // check edge between values
+                    if (adj[arr[last]][arr[nxt]]) {
+                        dp[mask | (1 << nxt)][nxt] += dp[mask][last];
+                    }
+                }
+            }
+        }
+
+        int ans = 0;
+        for (int i = 0; i < N; i++) {
+            ans += dp[(1 << N) - 1][i];
+        }
+
+        // remove duplicate permutations
+        sort(arr.begin(), arr.end());
+        for (int i = 0; i < N; ) {
+            int j = i;
+            while (j < N && arr[j] == arr[i]) j++;
+            int cnt = j - i;
+
+            int fact = 1;
+            for (int k = 1; k <= cnt; k++) fact *= k;
+
+            ans /= fact;
+            i = j;
+        }
+
+        return ans;
+    }
+};
