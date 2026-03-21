@@ -1,0 +1,36 @@
+class Solution {
+public:
+    void generate(vector<int>& arr, int start, int end, vector<long long>& res, long long prod, long long k) {
+        if (prod > k) return;
+        if (start > end) {
+            res.push_back(prod);
+            return;
+        }
+
+        generate(arr, start + 1, end, res, prod, k);
+
+        generate(arr, start + 1, end, res, prod * arr[start], k);
+    }
+
+    int numOfSubsets(vector<int>& arr, int k) {
+        int n = arr.size();
+
+        vector<long long> left, right;
+
+        generate(arr, 0, n/2 - 1, left, 1, k);
+        generate(arr, n/2, n - 1, right, 1, k);
+
+        sort(right.begin(), right.end());
+
+        long long ans = 0;
+
+        for (auto x : left) {
+            if (x > k) continue;
+
+            int cnt = upper_bound(right.begin(), right.end(), k / x) - right.begin();
+            ans += cnt;
+        }
+
+        return ans - 1; // remove empty subset
+    }
+};
