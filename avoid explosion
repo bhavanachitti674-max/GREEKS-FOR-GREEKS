@@ -1,0 +1,56 @@
+class Solution {
+public:
+    vector<int> parent;
+
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]);
+        return parent[x];
+    }
+
+    void unite(int a, int b) {
+        a = find(a);
+        b = find(b);
+        if (a != b)
+            parent[b] = a;
+    }
+
+    vector<string> avoidExplosion(vector<vector<int>>& mix, int n,
+                                  vector<vector<int>>& danger, int m) {
+
+        parent.resize(n + 1);
+        for (int i = 1; i <= n; i++)
+            parent[i] = i;
+
+        vector<string> ans;
+
+        for (auto &p : mix) {
+            int x = p[0], y = p[1];
+
+            int px = find(x), py = find(y);
+
+            bool safe = true;
+
+            for (auto &d : danger) {
+                int a = d[0], b = d[1];
+
+                int pa = find(a), pb = find(b);
+
+                // If merging causes dangerous pair in same set
+                if ((px == pa && py == pb) || (px == pb && py == pa)) {
+                    safe = false;
+                    break;
+                }
+            }
+
+            if (safe) {
+                unite(x, y);
+                ans.push_back("Yes");
+            } else {
+                ans.push_back("No");
+            }
+        }
+
+        return ans;
+    }
+};
