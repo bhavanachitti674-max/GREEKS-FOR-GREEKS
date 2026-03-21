@@ -1,0 +1,41 @@
+class Solution {
+public:
+    
+    bool check(int preStart, int inStart, int postStart, int n,
+               int preorder[], int inorder[], int postorder[]) {
+        
+        if (n <= 0) return true;
+
+        // root from preorder
+        int root = preorder[preStart];
+
+        // root must match last of postorder
+        if (root != postorder[postStart + n - 1])
+            return false;
+
+        // find root in inorder
+        int idx = -1;
+        for (int i = 0; i < n; i++) {
+            if (inorder[inStart + i] == root) {
+                idx = i;
+                break;
+            }
+        }
+
+        if (idx == -1) return false;
+
+        // left subtree size = idx
+        // right subtree size = n - idx - 1
+
+        return check(preStart + 1, inStart, postStart, idx,
+                     preorder, inorder, postorder)
+            &&
+               check(preStart + idx + 1, inStart + idx + 1,
+                     postStart + idx, n - idx - 1,
+                     preorder, inorder, postorder);
+    }
+
+    bool checktree(int preorder[], int inorder[], int postorder[], int N) {
+        return check(0, 0, 0, N, preorder, inorder, postorder);
+    }
+};
