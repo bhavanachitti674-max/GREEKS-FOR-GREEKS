@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int minInsAndDel(int A[], int B[], int N, int M) {
+        unordered_map<int, int> pos;
+        
+        // Map B values to index
+        for (int i = 0; i < M; i++)
+            pos[B[i]] = i;
+
+        vector<int> temp;
+
+        // Build sequence from A based on B order
+        for (int i = 0; i < N; i++) {
+            if (pos.find(A[i]) != pos.end()) {
+                temp.push_back(pos[A[i]]);
+            }
+        }
+
+        // Find LIS of temp
+        vector<int> lis;
+        for (int x : temp) {
+            auto it = lower_bound(lis.begin(), lis.end(), x);
+            if (it == lis.end())
+                lis.push_back(x);
+            else
+                *it = x;
+        }
+
+        int L = lis.size();
+
+        return (N - L) + (M - L);
+    }
+};
