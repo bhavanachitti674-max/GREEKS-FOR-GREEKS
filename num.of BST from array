@@ -1,0 +1,43 @@
+class Solution {
+public:
+    
+    int countBST(vector<int>& arr) {
+        int n = arr.size();
+        if (n <= 1) return 1;
+
+        int total = 0;
+
+        for (int i = 0; i < n; i++) {
+            vector<int> left, right;
+
+            for (int j = 0; j < n; j++) {
+                if (j == i) continue;
+                if (arr[j] < arr[i]) left.push_back(arr[j]);
+                else right.push_back(arr[j]);
+            }
+
+            total += countBST(left) * countBST(right);
+        }
+
+        return total;
+    }
+
+    vector<int> countBSTs(vector<int> &arr) {
+        int n = arr.size();
+        vector<int> res;
+
+        for (int i = 0; i < n; i++) {
+            vector<int> left, right;
+
+            for (int j = 0; j < n; j++) {
+                if (j == i) continue;
+                if (arr[j] < arr[i]) left.push_back(arr[j]);
+                else right.push_back(arr[j]);
+            }
+
+            res.push_back(countBST(left) * countBST(right));
+        }
+
+        return res;
+    }
+};
