@@ -1,0 +1,46 @@
+class Solution {
+public:
+    int countSubstring(string s) {
+        int n = s.size();
+        
+        vector<int> pref(n + 1, 0);
+        
+        // Build prefix sum
+        for (int i = 0; i < n; i++) {
+            pref[i + 1] = pref[i] + (s[i] == '1' ? 1 : -1);
+        }
+
+        // Coordinate compression
+        vector<int> temp = pref;
+        sort(temp.begin(), temp.end());
+        temp.erase(unique(temp.begin(), temp.end()), temp.end());
+
+        // Fenwick Tree
+        vector<int> BIT(temp.size() + 1, 0);
+
+        auto update = [&](int i) {
+            for (++i; i < BIT.size(); i += i & -i)
+                BIT[i]++;
+        };
+
+        auto query = [&](int i) {
+            int sum = 0;
+            for (++i; i > 0; i -= i & -i)
+                sum += BIT[i];
+            return sum;
+        };
+
+        long long ans = 0;
+
+        for (int i = 0; i <= n; i++) {
+            int idx = lower_bound(temp.begin(), temp.end(), pref[i]) - temp.begin();
+            
+            // count how many prefix < current
+            ans += query(idx - 1);
+            
+            update(idx);
+        }
+
+        return ans;
+    }
+};
