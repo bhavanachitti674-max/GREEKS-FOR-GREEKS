@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int maxSkill(vector<int>& arr) {
+        int n = arr.size();
+
+        // Add 1 at both ends
+        vector<int> a(n + 2, 1);
+        for (int i = 0; i < n; i++)
+            a[i + 1] = arr[i];
+
+        vector<vector<int>> dp(n + 2, vector<int>(n + 2, 0));
+
+        // length of interval
+        for (int len = 1; len <= n; len++) {
+            for (int left = 1; left <= n - len + 1; left++) {
+                int right = left + len - 1;
+
+                for (int k = left; k <= right; k++) {
+                    dp[left][right] = max(
+                        dp[left][right],
+                        dp[left][k - 1] +
+                        dp[k + 1][right] +
+                        a[left - 1] * a[k] * a[right + 1]
+                    );
+                }
+            }
+        }
+
+        return dp[1][n];
+    }
+};
