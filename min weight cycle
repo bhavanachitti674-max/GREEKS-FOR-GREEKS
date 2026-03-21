@@ -1,0 +1,45 @@
+class Solution {
+public:
+    int findMinCycle(int V, vector<vector<int>>& edges) {
+        vector<vector<pair<int,int>>> adj(V);
+        
+        for (auto &e : edges) {
+            adj[e[0]].push_back({e[1], e[2]});
+            adj[e[1]].push_back({e[0], e[2]});
+        }
+
+        int ans = INT_MAX;
+
+        for (auto &e : edges) {
+            int u = e[0], v = e[1], w = e[2];
+
+            vector<int> dist(V, INT_MAX);
+            priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;
+
+            dist[u] = 0;
+            pq.push({0, u});
+
+            while (!pq.empty()) {
+                auto [d, node] = pq.top(); pq.pop();
+
+                if (d > dist[node]) continue;
+
+                for (auto &[nei, wt] : adj[node]) {
+                    // skip current edge
+                    if ((node == u && nei == v && wt == w) ||
+                        (node == v && nei == u && wt == w)) continue;
+
+                    if (dist[nei] > d + wt) {
+                        dist[nei] = d + wt;
+                        pq.push({dist[nei], nei});
+                    }
+                }
+            }
+
+            if (dist[v] != INT_MAX)
+                ans = min(ans, dist[v] + w);
+        }
+
+        return (ans == INT_MAX) ? -1 : ans;
+    }
+};
