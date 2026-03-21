@@ -1,0 +1,41 @@
+class Solution {
+public:
+    long long sumOfModes(vector<int>& arr, int k) {
+        unordered_map<int,int> freq;
+
+        // set stores: { -freq, value } → max freq first, tie → smaller value
+        set<pair<int,int>> st;
+
+        auto add = [&](int x) {
+            if (freq[x] > 0)
+                st.erase({-freq[x], x});
+            freq[x]++;
+            st.insert({-freq[x], x});
+        };
+
+        auto remove = [&](int x) {
+            st.erase({-freq[x], x});
+            freq[x]--;
+            if (freq[x] > 0)
+                st.insert({-freq[x], x});
+        };
+
+        // initial window
+        for (int i = 0; i < k; i++)
+            add(arr[i]);
+
+        long long ans = 0;
+
+        // first mode
+        ans += st.begin()->second;
+
+        for (int i = k; i < arr.size(); i++) {
+            add(arr[i]);
+            remove(arr[i - k]);
+
+            ans += st.begin()->second;
+        }
+
+        return ans;
+    }
+};
