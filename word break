@@ -1,0 +1,51 @@
+class TrieNode {
+public:
+    TrieNode* child[26];
+    bool isEnd;
+
+    TrieNode() {
+        isEnd = false;
+        for (int i = 0; i < 26; i++) child[i] = NULL;
+    }
+};
+
+class Solution {
+public:
+    void insert(TrieNode* root, string word) {
+        TrieNode* node = root;
+        for (char c : word) {
+            int idx = c - 'a';
+            if (!node->child[idx])
+                node->child[idx] = new TrieNode();
+            node = node->child[idx];
+        }
+        node->isEnd = true;
+    }
+
+    int wordBreak(string A, vector<string>& B) {
+        TrieNode* root = new TrieNode();
+
+        for (auto &w : B)
+            insert(root, w);
+
+        int n = A.size();
+        vector<int> dp(n + 1, 0);
+        dp[0] = 1;
+
+        for (int i = 0; i < n; i++) {
+            if (!dp[i]) continue;
+
+            TrieNode* node = root;
+            for (int j = i; j < n; j++) {
+                int idx = A[j] - 'a';
+                if (!node->child[idx]) break;
+
+                node = node->child[idx];
+                if (node->isEnd)
+                    dp[j + 1] = 1;
+            }
+        }
+
+        return dp[n];
+    }
+};
