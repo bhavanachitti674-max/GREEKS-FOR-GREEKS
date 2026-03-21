@@ -1,0 +1,57 @@
+class Solution {
+public:
+    int bfs(int N, vector<vector<int>>& cap, vector<int>& parent) {
+        fill(parent.begin(), parent.end(), -1);
+        parent[1] = -2;
+
+        queue<pair<int,int>> q;
+        q.push({1, INT_MAX});
+
+        while (!q.empty()) {
+            auto [u, flow] = q.front(); q.pop();
+
+            for (int v = 1; v <= N; v++) {
+                if (parent[v] == -1 && cap[u][v] > 0) {
+                    parent[v] = u;
+                    int new_flow = min(flow, cap[u][v]);
+
+                    if (v == N)
+                        return new_flow;
+
+                    q.push({v, new_flow});
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    int findMaxFlow(int N, int M, vector<vector<int>>& Edges) {
+        vector<vector<int>> cap(N+1, vector<int>(N+1, 0));
+
+        for (auto &e : Edges) {
+            int u = e[0], v = e[1], w = e[2];
+            cap[u][v] += w;
+            cap[v][u] += w;
+        }
+
+        int flow = 0;
+        vector<int> parent(N+1);
+
+        int new_flow;
+
+        while ((new_flow = bfs(N, cap, parent))) {
+            flow += new_flow;
+
+            int cur = N;
+            while (cur != 1) {
+                int prev = parent[cur];
+                cap[prev][cur] -= new_flow;
+                cap[cur][prev] += new_flow;
+                cur = prev;
+            }
+        }
+
+        return flow;
+    }
+};
