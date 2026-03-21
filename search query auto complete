@@ -1,0 +1,44 @@
+class AutoCompleteSystem {
+public:
+    unordered_map<string, int> freq;
+    string current;
+
+    AutoCompleteSystem(vector<string>& sentences, vector<int>& times) {
+        for (int i = 0; i < sentences.size(); i++) {
+            freq[sentences[i]] += times[i];
+        }
+        current = "";
+    }
+
+    vector<string> input(char c) {
+        if (c == '#') {
+            freq[current]++;
+            current = "";
+            return {};
+        }
+
+        current += c;
+        vector<pair<string,int>> candidates;
+
+        // collect matching prefix
+        for (auto &p : freq) {
+            if (p.first.find(current) == 0) {
+                candidates.push_back(p);
+            }
+        }
+
+        // sort by freq desc, then lexicographically
+        sort(candidates.begin(), candidates.end(), [](auto &a, auto &b) {
+            if (a.second != b.second)
+                return a.second > b.second;
+            return a.first < b.first;
+        });
+
+        vector<string> res;
+        for (int i = 0; i < min(3, (int)candidates.size()); i++) {
+            res.push_back(candidates[i].first);
+        }
+
+        return res;
+    }
+};
